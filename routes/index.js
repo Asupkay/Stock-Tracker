@@ -7,27 +7,49 @@ const router = vertex.router()
 	Data is rendered using the Mustache templating engine. For more
 	information, view here: https://mustache.github.io/#demo */
 router.get('/', function(req, res){
-	res.render('index', {text: 'This is the dynamic data. Open index.js from the routes directory to see.'})
+    if(req.vertexSession.user) {
+        res.redirect('/stocks');
+    } else {
+        let loginmessage = req.query.loginmessage;
+        let signupmessage = req.query.signupmessage;
+        res.render('index', {loginmessage: loginmessage, signupmessage: signupmessage})
+    }
 })
 
-/*  This route render json data */
-router.get('/json', function(req, res){
-	res.json({
-		confirmation: 'success',
-		app: pkg_json.app,
-		data: 'this is a sample json route.'
-	})
+router.get('/stocks', function(req, res) {
+
+    if(req.vertexSession.user) {
+        res.render('stocks');
+    } else {
+        res.redirect('/')
+    }
 })
 
-/*  This route sends text back as plain text. */
-router.get('/send', function(req, res){
-	res.send('This is the Send Route')
+router.get('/logout', (req, res) => {
+    req.vertexSession.reset()
+    res.redirect('/')
 })
 
-/*  This route redirects requests to Turbo360. */
-router.get('/redirect', function(req, res){
-	res.redirect('https://www.turbo360.co/landing')
+router.post('/login', function(req, res) {
+    turbo.login(req.body)
+    .then(data => {
+        req.vertexSession.user = {id: data.id}
+        res.redirect('/stocks')
+    })
+    .catch(err => {
+        res.redirect('/?loginmessage=' + err.message)
+    })
 })
 
+router.post('/signup', function(req, res) {
+    turbo.createUser(req.body)
+    .then(data => {
+        req.vertexSession.user = {id: data.id}
+        res.redirect('/stocks')
+    })
+    .catch(err => {
+        res.redirect('/?signupmessage' + err.message)
+    })
+})
 
 module.exports = router

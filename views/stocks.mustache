@@ -3,25 +3,16 @@
 {{>head}}
 
 <body class="container">
-  <h1>Stock Tracker Deluxe!</h1>
-  <div>
-    <h3>Sign Up</h3>
-    <form action="/signup" method="post">
-      <input type="text" name="email" placeholder="Email" /><br />
-      <input type="password" name="password" placeholder="Password" /><br />
-      <button type="submit">Sign up!</button>
-    </form>
-    <p>{{signupmessage}}</p>
-  </div>
-  <div>
-    <h3>Login</h3>
-    <form action="/login" method="post">
-      <input type="text" name="email" placeholder="Email" /><br />
-      <input type="password" name="password" placeholder="Password" /><br />
-      <button type="submit">Login!</button>
-    </form>
-    <p>{{loginmessage}}</p>
-  </div>
+  <h1>Stock Prices!</h1>
+  <form action="/logout" method="get">
+    <button type="submit">Log Out</button>
+  </form>
+  <form action="/stocks" method="post">
+    <input type="text" name="stockinput" placeholder="Stock Symbol" /><br />
+    <button type="submit">Add New</button>
+  </form>
+  <ul>
+  </ul>
   <!-- Turbo library imports: jQuery, Turbo CDN, sample app.js.
   NOTE: These should be minified in a build script -->
   <script type="text/javascript" src="/js/jquery.js"></script>
