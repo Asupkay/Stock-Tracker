@@ -8,21 +8,52 @@ const router = vertex.router()
 	information, view here: https://mustache.github.io/#demo */
 router.get('/', function(req, res){
     if(req.vertexSession.user) {
-        res.redirect('/stocks');
+        res.redirect('/stocks')
     } else {
-        let loginmessage = req.query.loginmessage;
-        let signupmessage = req.query.signupmessage;
+        let loginmessage = req.query.loginmessage
+        let signupmessage = req.query.signupmessage
         res.render('index', {loginmessage: loginmessage, signupmessage: signupmessage})
     }
 })
 
 router.get('/stocks', function(req, res) {
-
     if(req.vertexSession.user) {
-        res.render('stocks');
+        turbo.fetchUser(req.vertexSession.user.id)
+        .then(data => {
+            res.render('stocks', {stockinput: data.stockinput})
+        })
     } else {
         res.redirect('/')
     }
+})
+
+router.post('/stocks', function(req, res) {
+    turbo.fetchUser(req.vertexSession.user.id)
+    .then(data => {
+        let newStocks = data.stockinput
+        newStocks.push(req.body.stockinput)
+        turbo.updateUser(req.vertexSession.user.id, {stockinput: newStocks})
+        .then(data => {
+            res.redirect('/stocks');
+        })
+    })
+    
+})
+
+router.post('/deletestock', function(req, res) {
+    turbo.fetchUser(req.vertexSession.user.id)
+    .then(data => {
+        let newStocks = data.stockinput
+        let index = newStocks.indexOf(req.body.stockdelete)
+        if(index > -1) {
+            newStocks.splice(index, 1);
+        }
+
+        turbo.updateUser(req.vertexSession.user.id, {stockinput: newStocks})
+        .then(data => {
+            res.redirect('/stocks');
+        })
+    })
 })
 
 router.get('/logout', (req, res) => {
@@ -42,7 +73,9 @@ router.post('/login', function(req, res) {
 })
 
 router.post('/signup', function(req, res) {
-    turbo.createUser(req.body)
+    let user = req.body;
+    user.stockinput = [];
+    turbo.createUser(user)
     .then(data => {
         req.vertexSession.user = {id: data.id}
         res.redirect('/stocks')

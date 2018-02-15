@@ -12,6 +12,15 @@
     <button type="submit">Add New</button>
   </form>
   <ul>
+    {{#stockinput}}
+    <li>
+      <form action="/deletestock" method="post">
+        {{.}}
+        <input type="hidden" name="stockdelete" value="{{.}}"/>
+        <button type="submit">Delete</button>
+      </form>
+    </li>
+    {{/stockinput}}
   </ul>
   <!-- Turbo library imports: jQuery, Turbo CDN, sample app.js.
   NOTE: These should be minified in a build script -->
