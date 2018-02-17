@@ -2,7 +2,7 @@ const pkg_json = require('../package.json')
 const turbo = require('turbo360')({site_id:pkg_json.app})
 const vertex = require('vertex360')({site_id:pkg_json.app})
 const router = vertex.router()
-const https = require("https")
+const https = require('https')
 const url = require('url')
 
 /*  This is the home route. It renders the index.mustache page from the views directory.
@@ -27,9 +27,8 @@ router.get('/stocks', function(req, res) {
                 for(let i = 0; i < data.stockinput.length; i++) {
                     stockprices.push({name: data.stockinput[i], price: stockdata[i]})
                 }
-                console.log(stockprices);
                 res.render('stocks', {stockinput: stockprices})
-            });
+            })
         })
     } else {
         res.redirect('/')
@@ -37,13 +36,13 @@ router.get('/stocks', function(req, res) {
 })
 
 getStockInfo = (stockinput) => {
-    let promises = [];
+    let promises = []
    
     stockinput.map((item) => {
         let URL = url.parse('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=' + item + '&apikey=YOUR_API_KEY')
         let promise = getStockPrice(URL)
         promises.push(promise)
-    });
+    })
         
     return Promise.all(promises).then((values) => {
         return values
@@ -57,20 +56,20 @@ function getStockPrice(url) {
         const option = {
             hostname: url.host,
             path: url.path,
-        };
+        }
 
         //Call the https get request
         let getRequest = https.get(option, (res) => {
-            let fulldata;
+            let fulldata
             res.on('data', (d) => {
                 if(fulldata) {
-                    fulldata += d;
+                    fulldata += d
                 } else {
-                    fulldata = d;
+                    fulldata = d
                 }
-            });
+            })
             res.on('end', () => {
-                let price; 
+                let price 
 
                 //Parse out the JSON data and grab the price from it
                 try {
@@ -79,14 +78,14 @@ function getStockPrice(url) {
                         price = stockJSONData["Time Series (Daily)"][Object.keys(stockJSONData["Time Series (Daily)"])[0]]['4. close']
                     }   
                 } catch (error) {
-                    price = "parsing error";
+                    price = "parsing error"
                 }
                 //resolve the promsie to the price information
-                resolve(price);
-            });
-        });
-    });
-    return promise;
+                resolve(price)
+            })
+        })
+    })
+    return promise
 }
 
 router.post('/stocks', function(req, res) {
@@ -96,7 +95,7 @@ router.post('/stocks', function(req, res) {
         newStocks.push(req.body.stockinput)
         turbo.updateUser(req.vertexSession.user.id, {stockinput: newStocks})
         .then(data => {
-            res.redirect('/stocks');
+            res.redirect('/stocks')
         })
     })
     
@@ -108,12 +107,12 @@ router.post('/deletestock', function(req, res) {
         let newStocks = data.stockinput
         let index = newStocks.indexOf(req.body.stockdelete)
         if(index > -1) {
-            newStocks.splice(index, 1);
+            newStocks.splice(index, 1)
         }
 
         turbo.updateUser(req.vertexSession.user.id, {stockinput: newStocks})
         .then(data => {
-            res.redirect('/stocks');
+            res.redirect('/stocks')
         })
     })
 })
@@ -136,7 +135,7 @@ router.post('/login', function(req, res) {
 
 router.post('/signup', function(req, res) {
     let user = req.body;
-    user.stockinput = [];
+    user.stockinput = []
     turbo.createUser(user)
     .then(data => {
         req.vertexSession.user = {id: data.id}
