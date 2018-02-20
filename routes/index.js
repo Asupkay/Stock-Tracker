@@ -39,7 +39,7 @@ getStockInfo = (stockinput) => {
     let promises = []
    
     stockinput.map((item) => {
-        let URL = url.parse('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=' + item + '&apikey=YOUR_API_KEY')
+        let URL = url.parse('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=' + item + '&apikey=ZPP16B1CRMPZS5UI')
         let promise = getStockPrice(URL)
         promises.push(promise)
     })
