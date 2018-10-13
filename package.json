@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "express": "latest",
-    "nodemon": "latest",
+    "nodemon": "^1.18.4",
     "rimraf": "latest"
   },
   "app": "5a7616f9e08a28001433479c",
