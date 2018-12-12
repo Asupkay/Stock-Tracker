@@ -8,12 +8,12 @@
     "build": ""
   },
   "dependencies": {
-    "turbo360": "latest",
-    "vertex360": "latest"
+    "turbo360": "^1.6.35",
+    "vertex360": "^0.11.64"
   },
   "devDependencies": {
-    "express": "latest",
-    "nodemon": "^1.18.4",
+    "express": "^4.16.4",
+    "nodemon": "^1.18.9",
     "rimraf": "latest"
   },
   "app": "5a7616f9e08a28001433479c",
